@@ -14,10 +14,7 @@ from sklearn.model_selection import KFold
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 import os   
 import pickle
-
-import streamlit as st
-import pandas as pd
-import pickle
+import joblib
 
 # Load the pre-trained model
 best_model = joblib.load('best_model.pkl')
