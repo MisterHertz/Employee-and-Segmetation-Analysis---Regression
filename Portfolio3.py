@@ -10,6 +10,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
+from sklearn.model_selection import KFold
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+import os   # if you check for file existence
+
 
 # -------------------------------
 # Streamlit page config
