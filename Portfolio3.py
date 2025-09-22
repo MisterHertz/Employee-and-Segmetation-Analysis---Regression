@@ -19,80 +19,41 @@ import streamlit as st
 import pandas as pd
 import pickle
 
-# --- Define the pipeline as you already have ---
-num_mean = ['years_experience', 'bonus_percentage', 'overtime_hours']
-num_median = ['age', 'weekly_hours', 'performance_score']
-cat_ord = ['education_level']
-cat_ohe = ['gender', 'city', 'department', 'marital_status']
+# Load the pre-trained model
+best_model = joblib.load('best_model.pkl')
 
-edu_map = [['SMA', 'D3', 'S1', 'S2']]
+# Streamlit app title
+st.title("Employee Monthly Income Prediction")
 
-num_mean_pipe = Pipeline([
-    ('imputer', SimpleImputer(strategy='mean')),
-    ('scaler', StandardScaler())
-])
-
-num_median_pipe = Pipeline([
-    ('imputer', SimpleImputer(strategy='median')),
-    ('scaler', StandardScaler())
-])
-
-cat_ord_pipe = Pipeline([
-    ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
-    ('ordinal', OrdinalEncoder(categories=edu_map))
-])
-
-cat_ohe_pipe = Pipeline([
-    ('imputer', SimpleImputer(strategy='constant', fill_value='Unknown')),
-    ('onehot', OneHotEncoder(drop='first'))
-])
-
-preprocessor = ColumnTransformer(transformers=[
-    ('num_mean', num_mean_pipe, num_mean),
-    ('num_median', num_median_pipe, num_median),
-    ('cat_ord', cat_ord_pipe, cat_ord),
-    ('cat_onehot', cat_ohe_pipe, cat_ohe)
-])
-
-# Example trained model (replace with your actual trained model)
-best_model = Pipeline([
-    ('preprocessing', preprocessor),
-    ('model', LinearRegression())
-])
-
-# --- Streamlit App ---
-st.title("Monthly Income Prediction")
-
-st.header("Input Employee Data:")
-
+# User input fields
+age = st.number_input("Age", min_value=18, max_value=100, value=30)
 years_experience = st.number_input("Years of Experience", min_value=0, max_value=50, value=5)
+weekly_hours = st.number_input("Weekly Hours", min_value=0, max_value=80, value=40)
+overtime_hours = st.number_input("Overtime Hours", min_value=0, max_value=100, value=5)
 bonus_percentage = st.number_input("Bonus Percentage", min_value=0, max_value=100, value=10)
-overtime_hours = st.number_input("Overtime Hours", min_value=0, max_value=100, value=12)
-age = st.number_input("Age", min_value=18, max_value=70, value=30)
-weekly_hours = st.number_input("Weekly Working Hours", min_value=0, max_value=80, value=40)
-performance_score = st.number_input("Performance Score", min_value=0, max_value=100, value=85)
-
+performance_score = st.number_input("Performance Score", min_value=0, max_value=10, value=7)
 education_level = st.selectbox("Education Level", ['SMA', 'D3', 'S1', 'S2'])
 gender = st.selectbox("Gender", ['Male', 'Female'])
 city = st.text_input("City", value='Jakarta')
 department = st.text_input("Department", value='Sales')
 marital_status = st.selectbox("Marital Status", ['Single', 'Married', 'Divorced', 'Widower', 'Facto Union', 'Legally Separated'])
 
-if st.button("Predict Monthly Income"):
-    input_df = pd.DataFrame([{
-        'years_experience': years_experience,
-        'bonus_percentage': bonus_percentage,
-        'overtime_hours': overtime_hours,
-        'age': age,
-        'weekly_hours': weekly_hours,
-        'performance_score': performance_score,
-        'education_level': education_level,
-        'gender': gender,
-        'city': city,
-        'department': department,
-        'marital_status': marital_status
-    }])
+# Collect user inputs into a DataFrame
+input_data = pd.DataFrame([{
+    'age': age,
+    'years_experience': years_experience,
+    'weekly_hours': weekly_hours,
+    'overtime_hours': overtime_hours,
+    'bonus_percentage': bonus_percentage,
+    'performance_score': performance_score,
+    'education_level': education_level,
+    'gender': gender,
+    'city': city,
+    'department': department,
+    'marital_status': marital_status
+}])
 
-    # Prediction
-    predicted_income = best_model.predict(input_df)
-    st.success(f"Predicted Monthly Income: ${predicted_income[0]:,.2f}")
+# Predict button
+if st.button("Predict Monthly Income"):
+    prediction = best_model.predict(input_data)
+    st.write(f"Predicted Monthly Income: ${prediction[0]:,.2f}")
