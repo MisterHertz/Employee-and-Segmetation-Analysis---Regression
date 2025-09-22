@@ -32,8 +32,8 @@ performance_score = st.number_input("Performance Score", min_value=0, max_value=
 education_level = st.selectbox("Education Level", ['SMA', 'D3', 'S1', 'S2'])
 gender = st.selectbox("Gender", ['Male', 'Female'])
 city = st.text_input("City", value='Jakarta')
-department = st.text_input("Department", value='Sales')
-marital_status = st.selectbox("Marital Status", ['Single', 'Married', 'Divorced', 'Widower', 'Facto Union', 'Legally Separated'])
+department = st.selectbox("Department", ['Marketing', 'IT', 'Sales', 'Finance'])
+marital_status = st.selectbox("Marital Status", ['Single', 'Married', 'Divorced'])
 
 # Collect user inputs into a DataFrame
 input_data = pd.DataFrame([{
